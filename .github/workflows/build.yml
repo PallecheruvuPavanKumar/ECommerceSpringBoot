@@ -1,0 +1,32 @@
+name: Build Spring Project
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout source code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Java (change version if needed)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      # 3. Build with Maven
+      - name: Build with Maven (skip tests completely)
+        run: mvn -B clean package -Dmaven.test.skip=true
+
+
+        # If you want to skip tests, use:
+        # run: mvn -B clean package -DskipTests
