@@ -3,6 +3,8 @@ package com.Ecommerce.service;
 import com.Ecommerce.model.User;
 import com.Ecommerce.model.UserPrincipal;
 import com.Ecommerce.repository.UserRepo;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,19 +12,21 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class MyUserDetailsService implements UserDetailsService {
     
     @Autowired
-    private UserRepo userRepo;
+    private UserRepo userRegistrationRepo;
+    
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User byusername = userRepo.findByusername(username);
-        if(byusername !=null){
-            new UserPrincipal(byusername);
+    public UserDetails loadUserByUsername(String userName){
+        System.out.println("Entered");
+        User byUserName = userRegistrationRepo.findByusername(userName);
+        if (byUserName == null) {
+            System.out.println("user is null");
+            throw new UsernameNotFoundException("User not found: " + byUserName);
         }
-        else
-            System.out.println("UserDetails Not Found in the DataBase");
-        
-        return null;
+        return new UserPrincipal(byUserName);
     }
 }

@@ -14,9 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class UserPrincipal implements UserDetails {
     
-    @Autowired
     private User user;
-    
     
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
