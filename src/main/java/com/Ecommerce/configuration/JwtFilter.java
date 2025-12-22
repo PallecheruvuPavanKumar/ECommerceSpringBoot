@@ -51,9 +51,14 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        String path = request.getRequestURI();
+        if (path.equals("/api/login") || path.equals("/api/register")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        else if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+           
             
             if (jwtService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken =
@@ -68,12 +73,19 @@ public class JwtFilter extends OncePerRequestFilter {
             } else {
                 System.out.println("✗ Token validation failed for user: " + username);
             }
+            filterChain.doFilter(request, response);
         }
         
         System.out.println("Final Authentication: " + SecurityContextHolder.getContext().getAuthentication());
         System.out.println("======================");
         
-        filterChain.doFilter(request, response);
+        
+    }
+    
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return path.equals("/api/login") || path.equals("/api/register");
     }
     
 }
